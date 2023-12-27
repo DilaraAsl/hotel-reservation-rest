@@ -39,7 +39,7 @@ public class ReservationController {
         }
         else  return new ResponseEntity<>("Invalid reservation data", HttpStatus.BAD_REQUEST);
     }
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete/{id}")
     ResponseEntity<String> deleteReservation(@PathVariable("id") Long id){
         if(id!=null){
             reservationService.deleteReservation(id);
