@@ -6,7 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/reservation")
@@ -21,31 +23,42 @@ public class ReservationController {
     ResponseEntity<List<ReservationDto>> getReservationList(){
         return new ResponseEntity<>(reservationService.getReservations(),HttpStatus.OK);
     }
+    @GetMapping("/{id}")
+    ResponseEntity<ReservationDto> getReservationById(@PathVariable("id")Long id){
+        ReservationDto reservationDto=reservationService.getReservationById(id);
+        return new ResponseEntity<>(reservationDto,HttpStatus.OK);
+    }
 
     @PostMapping("/new")
-    ResponseEntity<String> addNewReservation(ReservationDto reservationDto){
+    ResponseEntity<ReservationDto> addNewReservation(@RequestBody ReservationDto reservationDto){
         if(reservationDto!=null){
             reservationService.addReservation(reservationDto);
-            return ResponseEntity.ok("Reservation added successfully!");
+//            Map<String, String> response = Collections.singletonMap("message", "Reservation added successfully!");
+
+            return ResponseEntity.ok(reservationDto);
         }
-        else  return new ResponseEntity<>("Invalid reservation data", HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().build();
     }
 
     @PutMapping("/update")
-    ResponseEntity<String> updateReservation(ReservationDto reservationDto){
+    ResponseEntity<Map<String,String>> updateReservation(ReservationDto reservationDto){
         if(reservationDto!=null){
             reservationService.updateReservation(reservationDto);
-            return ResponseEntity.ok("Reservation added successfully!");
+            Map<String, String> response = Collections.singletonMap("message", "Reservation id:+"+reservationDto.getId() + " updated successfully!");
+            return ResponseEntity.ok(response);
         }
-        else  return new ResponseEntity<>("Invalid reservation data", HttpStatus.BAD_REQUEST);
-    }
-    @DeleteMapping("/delete/{id}")
-    ResponseEntity<String> deleteReservation(@PathVariable("id") Long id){
-        if(id!=null){
-            reservationService.deleteReservation(id);
-            return ResponseEntity.ok("Reservation deleted with success");
-        }
-        else return new ResponseEntity<>("Invalid reservation id", HttpStatus.BAD_REQUEST);
+        return ResponseEntity.notFound().build();
     }
 
+    @DeleteMapping("/delete/{id}")
+    ResponseEntity<Map<String, String>> deleteAppointment(@PathVariable("id") Long id) {
+        if (id == null) {
+            return ResponseEntity.notFound().build();
+        }
+        System.out.println("Deleting reservation with ID: " + id);
+        reservationService.deleteReservation(id);
+
+        Map<String, String> response = Collections.singletonMap("message", "Appointment id:" + id + " deleted successfully!");
+        return ResponseEntity.ok().body(response);
+    }
 }
