@@ -31,6 +31,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public void updateReservation(ReservationDto newReservationDto) {
+        System.out.println("reservation id: to update"+newReservationDto.getId());
         Reservation savedReservation = reservationRepository.findById(newReservationDto.getId()).orElseThrow(() -> new ReservationNotFoundException("Reservation not found, cannot be updated"));
         Reservation newReservation = (mapperUtil.convert(newReservationDto, new Reservation()));
         newReservation.setId(savedReservation.getId());

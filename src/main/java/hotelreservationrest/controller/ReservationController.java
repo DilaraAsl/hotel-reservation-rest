@@ -5,7 +5,6 @@ import hotelreservationrest.service.ReservationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +25,7 @@ public class ReservationController {
     @GetMapping("/{id}")
     ResponseEntity<ReservationDto> getReservationById(@PathVariable("id")Long id){
         ReservationDto reservationDto=reservationService.getReservationById(id);
+        System.out.println("Getting reservation "+reservationDto.getId());
         return new ResponseEntity<>(reservationDto,HttpStatus.OK);
     }
 
@@ -34,14 +34,14 @@ public class ReservationController {
         if(reservationDto!=null){
             reservationService.addReservation(reservationDto);
 //            Map<String, String> response = Collections.singletonMap("message", "Reservation added successfully!");
-
             return ResponseEntity.ok(reservationDto);
         }
         return ResponseEntity.badRequest().build();
     }
 
-    @PutMapping("/update")
-    ResponseEntity<Map<String,String>> updateReservation(ReservationDto reservationDto){
+    @PutMapping("/update/{id}")
+    ResponseEntity<Map<String,String>> updateReservation(@PathVariable("id")Long id,@RequestBody ReservationDto reservationDto){
+        reservationDto.setId(id);
         if(reservationDto!=null){
             reservationService.updateReservation(reservationDto);
             Map<String, String> response = Collections.singletonMap("message", "Reservation id:+"+reservationDto.getId() + " updated successfully!");
